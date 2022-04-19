@@ -1,41 +1,52 @@
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
+require('./lib/db');
+require('dotenv').config();
+const express = require('express');
+logger = require('morgan');
+const app = express();
+const userRoute = require('./routes/users');
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
 
-var app = express();
 
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
-
+//middleware
 app.use(logger('dev'));
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
 
-// catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  next(createError(404));
+// //api routes
+app.use('/v1', userRoute);
+
+app.get("/", (req, res) => {
+  res.json({ message: "This is the main Twitee application entry point" });
 });
 
-// error handler
-app.use(function(err, req, res, next) {
+
+app.use(function (error, req, res, next) {
+
   // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
-
+  res.locals.message = error.message;
+  res.locals.error = req.app.get("env") === "development" ? error : {};
+  console.log(error);
   // render the error page
-  res.status(err.status || 500);
-  res.render('error');
+  if (!error.code) {
+    return res.status(500).json({
+      message: error.message || "Error processing request",
+      status: false,
+      data: null,
+    });
+  }
+  return res.status(error.code).json({
+    message: error.message,
+    status: false,
+    data: null,
+  });
 });
 
-module.exports = app;
+
+//server
+app.listen(process.env.PORT, _ => {
+  console.log(`Server running on PORT ${process.env.PORT} `);
+});
+if (err => {
+  console.log(`Error connecting to MongoDB: ${err}`);
+});
