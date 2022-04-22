@@ -4,7 +4,15 @@ const express = require('express');
 logger = require('morgan');
 const app = express();
 const userRoute = require('./routes/users');
+const path = require("path");
+const multer = require("multer");
+const upload = multer({ storage: multer.memoryStorage() });
 
+
+// Multer config
+app.use(
+  upload.single("media")
+);
 
 
 //middleware

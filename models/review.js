@@ -1,9 +1,9 @@
-const mongoose = require("mongoose");
-const tweetSchema = new mongoose.Schema(
+const mongoose = require('mongoose');
+const reviewSchema = new mongoose.Schema(
     {
         userId: {
             type: mongoose.Types.ObjectId,
-            ref: "users",
+            ref: 'users',
             required: true,
         },
         review: {
@@ -11,11 +11,14 @@ const tweetSchema = new mongoose.Schema(
             reqired: true,
         },
         count: {
-                type: String,
-                
-            },
+            type: Number,
+            default: 0
+        },
+        media: [{
+            type: String,
+        }],
     },
     { timestamps: true }
 );
 
-module.exports = mongoose.model("review", tweetSchema);
+module.exports = mongoose.model('review', reviewSchema);

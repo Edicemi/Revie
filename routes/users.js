@@ -2,36 +2,30 @@ const express = require("express");
 router = express.Router();
 const { body } = require("express-validator");
 const {
-  register,
+  signUp,
   login,
-  twitPost,
-  deletePost,
-  comment,
-  getPost,
-  forgetPassword,
-  resetPassword
+  reviewPost,
+  reviewCount,
+  getReviews
 } = require("../controllers/index");
 
 const { validateUserToken } = require("../lib/ath");
 
 // route for authentication
 router.post(
-  "/register",
+  "/signUp",
   body("fullname", "Name is required").trim(),
   body("email").isEmail().normalizeEmail(),
   body("password", "Password must be of  8 characters long and alphanumeric")
     .trim()
     .isLength({ min: 8 })
     .isAlphanumeric(),
-  register
+  signUp
 );
 
 router.post("/login", login);
-router.post("/twit", validateUserToken, twitPost);
-router.delete("/deletePost/:twitId", validateUserToken, deletePost);
-router.post("/comment/:postId", validateUserToken, comment);
-router.get("/fetchPost", validateUserToken, getPost);
-router.post("/forgetPassword", forgetPassword);
-router.post("/resetPassword", resetPassword);
+router.post("/review", validateUserToken, reviewPost);
+router.put("/countAdd/:reviewId", reviewCount);
+router.get("/reviews", getReviews);
 
 module.exports = router;
