@@ -117,7 +117,6 @@ exports.reviewCount = async (req, res, next) => {
             return res.status(200).json({
                 message: "Thank you for making this helpful",
             });
-
         };
     } catch (error) {
         next(error);

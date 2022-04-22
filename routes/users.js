@@ -26,6 +26,6 @@ router.post(
 router.post("/login", login);
 router.post("/review", validateUserToken, reviewPost);
 router.put("/countAdd/:reviewId", reviewCount);
-router.get("/reviews", getReviews);
+router.get("/getReview", getReviews);
 
 module.exports = router;
