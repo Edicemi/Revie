@@ -6,7 +6,7 @@ const {
   login,
   reviewPost,
   reviewCount,
-  getReviews
+  fetchHigestCountAggregate
 } = require("../controllers/index");
 
 const { validateUserToken } = require("../lib/ath");
@@ -26,6 +26,6 @@ router.post(
 router.post("/login", login);
 router.post("/review", validateUserToken, reviewPost);
 router.put("/countAdd/:reviewId", reviewCount);
-router.get("/getReview", getReviews);
+router.get("/getReview", fetchHigestCountAggregate);
 
 module.exports = router;

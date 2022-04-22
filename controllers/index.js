@@ -2,6 +2,7 @@ const path = require("path");
 const User = require("../models/user");
 const Review = require("../models/review");
 const CustomError = require("../lib/customError");
+const responseHandler = require("../utils/responseHandler");
 const { validationResult, body } = require("express-validator");
 const { passwordHash, passwordCompare } = require("../lib/bcrypt");
 const { jwtSign } = require("../lib/ath");
@@ -33,10 +34,8 @@ exports.signUp = async (req, res, next) => {
             });
 
             await user.save();
-            return res.status(200).json({
-                message: "User account created successfully",
-                
-            });
+            return responseHandler(res, 201, "User account created succesfully.");
+
         } else {
             throw new CustomError().invalid_parameter();
         }
@@ -105,33 +104,56 @@ exports.reviewPost = async (req, res, next) => {
     }
 };
 
-
 exports.reviewCount = async (req, res, next) => {
     try {
         const { reviewId } = req.params;
-            
-        const help = await Review.findOne({ reviewId });
-        if (help) {
-            help.count++;
-            await help.save();
-            return res.status(200).json({
-                message: "Thank you for making this helpful",
-            });
-        };
+        const review = await Review.findById(reviewId);
+        if (!review)
+            throw {
+                message: "Review not found",
+                code: 400,
+            };
+        review.count += 1;
+        await review.save();
+        return res.status(200).json({
+            message: "Thank you for making this helpful, Review count increased succesfully",
+        });
+    } catch (error) {
+        next(error);
+    };
+};
+
+
+
+// exports.reviewCount = async (req, res, next) => {
+//     try {
+//         const { reviewId } = req.params;
+
+//         const help = await Review.findOne({ reviewId });
+//         if (help) {
+//             help.count++;
+//             await help.save();
+//             return res.status(200).json({
+//                 message: "Thank you for making this helpful",
+//             });
+//         };
+//     } catch (error) {
+//         next(error);
+//     }
+// };
+
+
+// get by the highest of count field in all reviews
+exports.fetchHigestCountAggregate = async (req, res, next) => {
+    try {
+        const getReviews = await Review.find().sort({
+            count: -1
+        }).select("-createdAt -updatedAt")
+        return res.status(200).json({
+            message: 'fetched succesfully',
+            data: getReviews,
+        });
     } catch (error) {
         next(error);
     }
 };
-
-exports.getReviews = async (req, res, next) => {
-     try {
-            const getReviews = await Review.find().populate("userId")
-            return res.status(200).json({
-                message: "fetched succesfully",
-                
-            });
-        } catch (error) {
-            next(error);
-        }
-};
-
