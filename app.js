@@ -24,10 +24,10 @@ app.use(express.json());
 // //api routes
 app.use('/v1', userRoute);
 
-app.get("/", (req, res) => {
-  res.json({ message: "This is the main Twitee application entry point" });
-});
 
+app.get("/", (req, res) => {
+  res.json({ message: "This is the main Revie application entry point" });
+});
 
 app.use(function (error, req, res, next) {
 
